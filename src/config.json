@@ -1,0 +1,9 @@
+{
+  "country_code": "gb",
+  "device_family": "iPhone16",
+  "models": "all",
+  "zip_code": "L38JD",
+  "carriers": [""],
+  "stores": ["R239","R136","R215","R372", "R153"],
+  "appointment_stores": [""]
+}

@@ -1,0 +1,15 @@
+# Python temporary files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Secret files (if you ever use a .env file locally)
+.env
+
+# AWS/Serverless junk
+.aws-sam/
+template.yml.obj
+*.zip
+
+# OS junk
+.DS_Store
