@@ -74,7 +74,6 @@ class Configuration:
 
 class StoreChecker:
     """Class to handle store checking and fetching and processing of stock of apple products."""
-    
     # Base URL is the apple's URL used to make product links and also API
     # calls. Country code is needed only for non-US countries.
     APPLE_BASE_URL = "https://www.apple.com/{0}/"
@@ -106,12 +105,12 @@ class StoreChecker:
         device_list = self.find_devices()
         # Exit if no device was found.
         if not device_list:
-            print("{}".format(crayons.red("✖  No device matching your configuration was found!")))
+            print("{}".format(crayons.red("No device matching your configuration was found!")))
             exit(1)
         else:
             print(
                 "{} {} {}".format(
-                    crayons.green("✔  Found"), len(device_list), crayons.green("devices matching your config.")
+                    crayons.green("Found"), len(device_list), crayons.green("devices matching your config.")
                 )
             )
 
@@ -131,8 +130,7 @@ class StoreChecker:
         # requested (used to play the sound)
         stock_available = False
         all_telegram_items = {}
-        # Go through the stores and fetch the stock for all the devices/parts
-        # in the store and print their status.
+        # Go through the stores and fetch the stock for all the devices/parts in the store and print their status.
         for store in stores:
             print(
                 "\n\n{}, {} ({})".format(
@@ -153,7 +151,7 @@ class StoreChecker:
                 is_available = part.get("storePickEligible") or part.get("messageTypes", {}).get("regular", {}).get("storeSelectionEnabled")
                 print(
                     " - {} {} ({})".format(
-                    crayons.green("✔") if is_available else crayons.red("✖"),
+                    crayons.green("YES") if is_available else crayons.red("NO"),
                     crayons.green(title) if is_available else crayons.red(title),
                     crayons.green(part.get("partNumber")),
                     )
@@ -188,7 +186,6 @@ class StoreChecker:
         device_list = []
         # Downloading the list of products from the server for the current
         # device family.
-        print("{}".format(crayons.blue("➜  Downloading Models List...")))
         product_locator_response = requests.get(
             self.PRODUCT_LOCATOR_URL.format(self.base_url, self.configuration.device_family)
         )
@@ -220,9 +217,9 @@ class StoreChecker:
                     device_list.append({"title": product.get("productTitle"), "model": model, "carrier": carrier})
 
         except BaseException:
-            print("{}".format(crayons.red("✖  Failed to find the device family")))
+            print("{}".format(crayons.red("Failed to find the device family")))
             if self.configuration.selected_device_models is not None:
-                print("{}".format(crayons.blue("➜  Looking for device models instead...")))
+                print("{}".format(crayons.blue("Looking for device models instead")))
                 for model in self.configuration.selected_device_models:
                     device_list.append({"model": model})
         return device_list
@@ -236,7 +233,7 @@ class StoreChecker:
         try:
             data = response.json()
         except ValueError:
-            print(f"✖ Failed to decode JSON for model {device.get('model')}. Response text:\n{response.text}")
+            print(f"Failed to decode JSON for model {device.get('model')}. Response text:\n{response.text}")
             time.sleep(1)
             return
 
@@ -270,7 +267,7 @@ class StoreChecker:
 
     def get_store_availability(self):
         """Get a list of all the stores to check appointment availability."""
-        print("{}".format(crayons.blue("➜  Downloading store appointment availability...\n")))
+        print("{}".format(crayons.blue("Downloading store appointment availability...\n")))
         store_availability_list = requests.get(
             self.STORE_APPOINTMENT_AVAILABILITY_URL.format(
                 datetime.now().strftime("%Y-%m-%d"), datetime.utcnow().strftime("%H")
@@ -282,7 +279,7 @@ class StoreChecker:
                 if store.get("appointmentsAvailable") is True:
                     print(
                         " - Appointment Slot Available: {} {} ({})".format(
-                            crayons.green("✔"),
+                            crayons.green("YES"),
                             store.get("storeNumber"),
                             datetime.utcfromtimestamp(int(store.get("firstAvailableAppointment"))).strftime(
                                 "%d-%m-%Y %H:%M:%S"
@@ -291,10 +288,10 @@ class StoreChecker:
                     )
                     slots_found = True
                 else:
-                    print(" - {} {}".format(crayons.red("✖"), store.get("storeNumber")))
+                    print(" - {} {}".format(crayons.red("NO"), store.get("storeNumber")))
         if slots_found is True:
             send_email_alert()
-        print("{}".format(crayons.blue("\n✔  Done\n")))
+        print("{}".format(crayons.blue("\nDone\n")))
 
 
 def lambda_handler(event=None, context=None):
